@@ -16,3 +16,15 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.profile-picture {
+    margin-top:10px;
+    height: 295px;
+    width: 295px;
+    object-fit: cover;
+}
+
+.picture
+{
+    width:400px;
+}
