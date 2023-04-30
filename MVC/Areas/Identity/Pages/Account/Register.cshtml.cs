@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Drawing.Text;
 using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -17,7 +16,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using MVC.Areas.Identity.Data;
@@ -49,7 +47,6 @@ namespace MVC.Areas.Identity.Pages.Account
             _logger = logger;
             _emailSender = emailSender;
             _webHostEnvironment = webHostEnvironment;
-
         }
 
         /// <summary>
@@ -77,6 +74,11 @@ namespace MVC.Areas.Identity.Pages.Account
         /// </summary>
         public class InputModel
         {
+            /// <summary>
+            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+            ///     directly from your code. This API may change or be removed in future releases.
+            /// </summary>
+            /// 
             [Required]
             [StringLength(255, ErrorMessage = "The first name field should have a maximum of 255 characters")]
             [Display(Name = "Firstname")]
@@ -86,10 +88,8 @@ namespace MVC.Areas.Identity.Pages.Account
             [StringLength(255, ErrorMessage = "The last name field should have a maximum of 255 characters")]
             [Display(Name = "Lastname")]
             public string LastName { get; set; }
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
+            public IFormFile Image { get; set; }
+
             [Required]
             [EmailAddress]
             [Display(Name = "Email")]
@@ -113,10 +113,6 @@ namespace MVC.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
-
-            [Required]
-            [Display(Name="Image")]
-            public IFormFile Image { get; set; }
         }
 
 
@@ -132,12 +128,10 @@ namespace MVC.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-
                 var user = CreateUser();
-
                 user.FirstName = Input.FirstName;
                 user.LastName = Input.LastName;
-                //ruajtja e iformfile ne folder
+
 
                 if (Input.Image != null)
                 {
@@ -150,6 +144,8 @@ namespace MVC.Areas.Identity.Pages.Account
                     }
                     user.ImagePath = fileName;
                 }
+
+
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
@@ -186,6 +182,7 @@ namespace MVC.Areas.Identity.Pages.Account
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
+
             // If we got this far, something failed, redisplay form
             return Page();
         }

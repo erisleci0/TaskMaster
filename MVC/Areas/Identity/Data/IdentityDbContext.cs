@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MVC.Areas.Identity.Data;
+using MVC.Data.Domain.Models;
+using Task = MVC.Data.Domain.Models.Task;
 
 namespace MVC.Areas.Identity.Data;
 
@@ -12,7 +14,8 @@ public class IdentityDbContext : IdentityDbContext<ApplicationUser>
         : base(options)
     {
     }
-
+    public DbSet<Task> Tasks { get; set; }
+    public DbSet<Status> Statuses { get; set; }
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
