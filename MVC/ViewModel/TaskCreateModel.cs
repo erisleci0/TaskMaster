@@ -5,7 +5,7 @@ using Task = MVC.Data.Domain.Models.Task;
 
 namespace MVC.ViewModel
 {
-    public class TaskCreateModel
+    public class TaskCreateModel : Task
     {
         public Task Task { get; set; }
         public string StatusId { get; set; }

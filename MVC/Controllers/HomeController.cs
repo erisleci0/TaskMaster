@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Security.Claims;
 using Task = MVC.Data.Domain.Models.Task;
 using IdentityDbContext = MVC.Areas.Identity.Data.IdentityDbContext;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace MVC.Controllers
 {
@@ -34,7 +35,18 @@ namespace MVC.Controllers
 
         public IActionResult Create()
         {
-            return View();
+            var statusData = _db.Statuses.ToList();
+
+            var model = new TaskCreateModel();
+            model.Statuses = new List<SelectListItem>();
+
+            foreach (var status in statusData)
+            {
+                model.Statuses.Add(new SelectListItem { Text = status.Name, Value = status.Id });
+            }
+
+            return View(model);
+
         }
 
         [HttpPost]
@@ -53,6 +65,77 @@ namespace MVC.Controllers
             };
 
             _db.Tasks.Add(task);
+            _db.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult Edit(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+            var taskFromDb = _db.Tasks.Find(id);
+
+            if (taskFromDb == null)
+            {
+                return NotFound();
+            }
+            List<SelectListItem> selectListItems = new List<SelectListItem>();
+            foreach (Status status in _db.Statuses)
+            {
+                SelectListItem selectListItem = new SelectListItem()
+                {
+                    Text = status.Name,
+                    Value = status.Id
+                };
+                selectListItems.Add(selectListItem);
+            }
+            ViewBag.Statuses = selectListItems;
+
+            return View(taskFromDb);
+
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(Task task)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var statusId = task.StatusId;
+            task.UserID = userId;
+
+            _db.Tasks.Update(task);
+            _db.SaveChanges();
+            return RedirectToAction("Index");
+            //return View(task);
+        }
+
+        public IActionResult Delete(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+            var taskFromDb = _db.Tasks.Find(id);
+
+            if (taskFromDb == null)
+            {
+                return NotFound();
+            }
+
+            return View(taskFromDb);
+
+        }
+
+        public IActionResult DeletePOST(int? id)
+        {
+            var obj = _db.Tasks.Find(id);
+            if (obj == null)
+            {
+                return NotFound();
+            }
+            _db.Tasks.Remove(obj);
             _db.SaveChanges();
             return RedirectToAction("Index");
         }

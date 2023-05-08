@@ -1,0 +1,41 @@
+﻿@model MVC.Data.Domain.Models.Task
+@{
+    var statuses = ViewBag.Statuses;
+}
+<form method="post" asp-action="Edit">
+    <div class="border p-3 mt-4">
+        <div class="row pb-2">
+            <h2 class="text-primary">
+                Edit Category
+            </h2>
+            <hr />
+        </div>
+        <div>
+            <div class="mb-3">
+                <label asp-for="@Model.Name"></label>
+                <input asp-for="@Model.Name" class="form-control" />
+                <span asp-validation-for="@Model.Name" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div>
+            <div class="mb-3">
+                <label asp-for="@Model.Description"></label>
+                <input asp-for="@Model.Description" class="form-control" />
+                <span asp-validation-for="@Model.Description" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="@Model.StatusId"></label>
+            <select id="1stStatus" asp-items="@statuses" asp-for="@Model.StatusId">
+                <option value="">Select Status</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:150px">Update</button>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-secondary" style="width: 150px">
+            Back to List
+        </a>
+    </div>
+</form>
+
